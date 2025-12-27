@@ -1,0 +1,14 @@
+{
+    "id": 2,
+    "name": "Иван Иванов",
+    "groupName": "Группа 1",
+    "username": "ivan",
+    "password": "1234",
+  }
+
+
+
+{
+  "username": "admin",
+  "password": "123456"
+}

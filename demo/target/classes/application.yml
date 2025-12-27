@@ -36,3 +36,20 @@ jwt:
           days: 7
           second: 604800
       cookie-name: refresh-token
+
+---
+upload:
+  dir: uploads
+
+# Настройки multipart (для загрузки файлов через HTTP)
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 5MB
+---
+telegram:
+  bot:
+    token: 8555482404:AAHmsJ_zbZ9naWd34rc9Amu1PTx0C6BNYa4 #изменить
+    username: Notifications_for_study #

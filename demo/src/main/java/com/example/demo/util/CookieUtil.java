@@ -14,7 +14,8 @@ public class CookieUtil {
     private String refreshTokenCookieName;
 
     public HttpCookie createAccessCookie(String value, long duration) {
-        return ResponseCookie.from(accessTokenCookieName, value).maxAge(duration).httpOnly(true).secure(true).path("/").sameSite("None").build();
+        return ResponseCookie.from(accessTokenCookieName, value)
+        .maxAge(duration).httpOnly(true).secure(true).path("/").sameSite("None").build();
     }
 
     public HttpCookie deleteAccessCookie() {

@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -21,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 
 
 @EnableWebSecurity
-@EnableMethodSecurity
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfig {
@@ -30,7 +28,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    private static final String[] ALLOWED_URLS = {"/swagger-ui/**","/swagger-ui.html", "/v3/api-docs/**"};
+    private static final String[] ALLOWED_URLS = {"/swagger-ui/**", "/v3/api-docs/**"};
     private final JwtAuthFilter jwtAuthFilter;
     private final JwtAuthEntryPoint jwtAuthEntryPoint;
     
@@ -42,7 +40,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(auth -> {auth.requestMatchers(ALLOWED_URLS).permitAll();
-            auth.requestMatchers( "/api/auth/login", "/api/auth/refresh", "/api/auth/test-password").permitAll();
+            auth.requestMatchers("/api/auth/login", "/api/auth/refresh").permitAll();
             auth.anyRequest().authenticated();});
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthEntryPoint));

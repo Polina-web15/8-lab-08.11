@@ -10,7 +10,7 @@ import com.example.demo.model.Student;
 public class StudentMapper {
     public static StudentDto studentToStudentDto (Student student) {
         return new StudentDto(student.getId(),
-        student.getUsername(),
+        student.getName(),
         student.getPassword(),
         student.getRole().getAuthority(),
         student.getRole().getPermissions().stream().map(Permission::getAuthority).collect(Collectors.toSet()));

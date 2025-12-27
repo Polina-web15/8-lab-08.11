@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-//import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,15 +20,16 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-//import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "student100")
 public class Student implements UserDetails {
@@ -42,12 +42,10 @@ public class Student implements UserDetails {
     private String name;
     @Column(name = "group_name") // ← явно задаём имя столбца
     private String groupName;
-    @NotBlank
     @Column(nullable = false, unique = true)
-    String username;
-    @NotBlank
+    private String username;
     @Column(nullable = true)
-    String password;
+    private String password;
     
     @ManyToOne
     private Role role;
@@ -60,9 +58,9 @@ public class Student implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities(){
-        Set<String> authorities = new  HashSet<>();
+        Set<String> authorities = new HashSet<>();
         this.role.getPermissions().forEach(p -> authorities.add(p.getAuthority()));
-        authorities.add(role.getAuthority());
+        authorities.add("ROLE_"+role.getAuthority());
         return authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());   
     }
     //@ElementCollection

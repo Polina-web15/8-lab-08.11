@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.5</version>
+		<version>3.4.7</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
@@ -48,7 +48,6 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -58,18 +57,15 @@
 		<dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.8</version>
             <scope>runtime</scope> <!-- Если нужно -->
         </dependency>
 		<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <version>3.5.6</version>
 	    </dependency>
 		<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-			<version>3.5.6</version>
 		</dependency>	
 		<dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -88,12 +84,21 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
-		<!-- SpringDoc OpenAPI UI — для Swagger UI в Spring Boot 3 -->
-    <dependency>
-        <groupId>org.springdoc</groupId>
-        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-        <version>2.6.0</version>
-    </dependency>
+        <dependency>
+           <groupId>org.springdoc</groupId>
+           <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+           <version>2.6.0</version>
+        </dependency>
+	    <dependency>
+           <groupId>org.apache.commons</groupId>
+           <artifactId>commons-csv</artifactId>
+           <version>1.13.0</version> 
+        </dependency>
+		<dependency>
+           <groupId>org.telegram</groupId>
+           <artifactId>telegrambots-spring-boot-starter</artifactId>
+           <version>6.9.0</version>
+       </dependency>
 	</dependencies>
 	<build>
 		<plugins>

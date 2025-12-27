@@ -9,14 +9,13 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.StudentDto;
+import com.example.demo.dto.StudentImportDto;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.StudentMapper;
 import com.example.demo.model.Student;
@@ -24,13 +23,16 @@ import com.example.demo.repository.StudentRepository;
 import com.example.demo.specification.StudentSpecifications;
 
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
-@org.springframework.transaction.annotation.Transactional(readOnly=true)
-public class StudentService implements UserDetailsService{
+@Slf4j
+@Transactional(readOnly=true)
+public class StudentService{
 
     private final PasswordEncoder passwordEncoder;
     private final StudentRepository studentRepository;
+   // private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
     public StudentService(StudentRepository studentRepository, PasswordEncoder passwordEncoder){
         this.studentRepository = studentRepository;
         this.passwordEncoder = passwordEncoder;
@@ -43,39 +45,53 @@ public class StudentService implements UserDetailsService{
     public List<Student> getAll(){
         return studentRepository.findAll();
     }
-    @Cacheable(value="students", key="#root.MethodName")
+    @Cacheable(value="students", key="name")
     public List<Student> getAllByName(String name){
         return studentRepository.findAllByName(name);
     }
     @CacheEvict(value="students", allEntries=true)//нужно
     @Transactional
     public Student create(Student student){
+        log.info("Студент успешно создан и сохранён в БД: id={}, username={}", 
+        student.getUsername());
         return studentRepository.save(student);
     }
     @Cacheable(value="students", key="#id")
     public Student getById(Long id) {//true
-        return studentRepository.findById(id).orElse(null);
+        log.debug("Получение студента по id={} (с кэшированием)", id);
+        return studentRepository.findById(id).orElseThrow(() -> {
+            log.warn("Студент не найден по id: {}", id);
+            return new ResourceNotFoundException("Student with id " + id + " not found");
+        });
             
     }
      
     public Student update(Long id, Student student) {//true
+        log.info("Обновление студента с id={}", id);
         return studentRepository.findById(id).map(existingStudent -> {
             existingStudent.setName(student.getName());
             existingStudent.setGroupName(student.getGroupName());
             existingStudent.setRecentEntries(student.getRecentEntries());
+            log.info("Студент успешно обновлён: id={}, username={}");
             return studentRepository.save(existingStudent);
-        }).orElse(null);
+        }).orElseGet(() -> {
+            log.warn("Попытка обновить несуществующего студента с id={}", id);
+            return null;
+    });
     }
     @Caching(evict={
-         @CacheEvict(value="students", allEntries=true),
-         @CacheEvict(value={"students", "student"}, key="#id")
+         @CacheEvict(value="students", allEntries=true),       
     })
     public boolean deleteById(Long id) {//true
+        log.info("Удаление студента с id={}", id);
         if (studentRepository.existsById(id)) {
             studentRepository.deleteById(id);
             return true;
         }
-        return false;
+        else {
+            log.warn("Попытка удалить несуществующего студента с id={}", id);
+            return false;
+        }
     }
     public Page<Student> getByFilter(String name, String groupName,  Pageable pageable){//переделать
         return  studentRepository.findAll(StudentSpecifications.filter(name, groupName), pageable);
@@ -91,21 +107,28 @@ public class StudentService implements UserDetailsService{
     }
   
     public StudentDto  getStudentDto(String username) {  
-    Student student = studentRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("Student with username " + username + " not found"));
-    return StudentMapper.studentToStudentDto(student);
+        return StudentMapper.studentToStudentDto(getStudent(username));
     }
     public Student  getStudent(String username) {  
-    Student student = studentRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Student with username " + username + " not found"));
-    return student;
+        log.debug("Поиск студента по username: {}", username);
+        Student student = studentRepository.findByUsername(username).orElseThrow(() ->
+        {
+            log.warn("Студент не найден по username: {}", username);
+            return new UsernameNotFoundException("Student with username " + username + " not found");
+        });
+        log.debug("Студент найден: id={}, username={}", student.getId(), student.getUsername());
+        return student;
     }
-    public void saveStudent(Student student) {
-        if (student.getPassword() != null && !student.getPassword().startsWith("$2a$")) {
-            student.setPassword(passwordEncoder.encode(student.getPassword()));
+   
+    @Transactional
+    public Student create(StudentImportDto dto) {
+        Student student = new Student();
+        student.setId(dto.id());
+        student.setName(dto.name());
+        student.setUsername(dto.username()+"_"+dto.id());
+        student.setPassword(passwordEncoder.encode(dto.password()));
+        student.setGroupName("Default Group");
+        log.info("Студент успешно создан: id={}, username={}", student.getId(), student.getUsername());
+        return studentRepository.save(student);
         }
-        studentRepository.save(student);
-    }
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return getStudent(username);
-    }
 }
