@@ -8,5 +8,5 @@ Long id,
     String password,
     String role,
     Set<String> permissions
-) implements Serializable { 
+) implements Serializable {
 }

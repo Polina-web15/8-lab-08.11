@@ -6,7 +6,8 @@ import com.example.demo.service.TelegramUserService;
 import com.example.demo.service.TimeEntryService;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -16,21 +17,19 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Component
 public class TelegramBot extends TelegramLongPollingBot{
-    private String botUsername;
     private String botToken;
     private StudentService studentService;
     private TelegramUserService telegramUserService;
     private TimeEntryService timeEntryService;
-    @Autowired
+  
+
     public TelegramBot(
-        String botToken,
-        String botUsername,
+        @Value("${telegram.bot.token}") String botToken,
             StudentService studentService,
             TelegramUserService telegramUserService,
             TimeEntryService timeEntryService) {
         super(new DefaultBotOptions());
         this.botToken = botToken;
-        this.botUsername = botUsername;
         this.studentService = studentService;
         this.telegramUserService = telegramUserService;
         this.timeEntryService = timeEntryService;
@@ -38,7 +37,7 @@ public class TelegramBot extends TelegramLongPollingBot{
     
     @Override
     public String getBotUsername() {
-        return botUsername;
+        return "Notifications_for_study";
     }
 
     @Override

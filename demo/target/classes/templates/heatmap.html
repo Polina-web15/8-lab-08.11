@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru" xml:lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Тепловая карта</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black; 
+            padding: 2px;
+            text-align: center;
+            font-size: 10px;
+        }
+        .cell {
+            min-width: 15px;
+            height: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h3>Тепловая карта продуктивности (последние 7 дней)</h3>
+    <table>
+        <tr>
+            <th>День</th>
+            <!-- Нужны заголовки для часов -->
+            <th th:each="h : ${heatmap.hours}" th:text="${h}"></th>
+        </tr>
+        <tr th:each="row, i : ${heatmap.data}">
+            <td th:text="${heatmap.days[i.index]}"></td>
+            <!-- Ячейки с данными -->
+            <td th:each="cell : ${row}"
+                th:class="${cell > 0 ? 'cell' : ''}"
+                th:style="${cell > 0 ? 'background-color: ' + T(com.example.demo.controller.FileController).getColor(cell) : ''}"
+                th:text="${cell > 0 ? cell : ''}">
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

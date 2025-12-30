@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,5 +13,5 @@ JpaRepository<TimeEntry, Long>{
         List<TimeEntry> findByStudentId(Long studentId);
 
         List<TimeEntry> findByStudent_NameStartingWithIgnoreCase(String studentName);
-        List<TimeEntry> findAllByStudent_Name(String studentName);
+        List<TimeEntry> findByStudentIdAndStartAfter(Long studentId, LocalDateTime start);
 }

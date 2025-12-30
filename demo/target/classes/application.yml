@@ -52,4 +52,3 @@ spring:
 telegram:
   bot:
     token: 8555482404:AAHmsJ_zbZ9naWd34rc9Amu1PTx0C6BNYa4 #изменить
-    username: Notifications_for_study #

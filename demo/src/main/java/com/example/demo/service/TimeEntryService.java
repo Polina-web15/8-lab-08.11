@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.example.demo.model.TimeEntry;
 import com.example.demo.repository.TimeEntryRepository;
 
-//import ch.qos.logback.core.util.Duration;
 import java.time.Duration;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -121,5 +120,9 @@ public class TimeEntryService {
               .append(": ").append(durationMinutes).append(" мин\n");
         }
         return report.toString();
+    }
+
+    public List<TimeEntry> getEntriesByStudentId(Long studentId) {
+        return timeEntryRepository.findByStudentId(studentId);
     }
 }

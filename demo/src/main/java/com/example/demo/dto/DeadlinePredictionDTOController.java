@@ -1,40 +1,40 @@
 package com.example.demo.dto;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.web.bind.annotation.RestController;
-
-import jakarta.validation.Valid;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-
-
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
+@RequestMapping("/api")
 public class DeadlinePredictionDTOController {
 
-    private List<DeadlinePredictionDTO> subjects = new ArrayList<>(Arrays.asList());
-    //risk = "High" if (end > deadline)
-    //hoursLeft = end - starts
+    private final DeadlinePredictionService service;
+
+    public DeadlinePredictionDTOController(DeadlinePredictionService service) {
+        this.service = service;
+    }
 
     @GetMapping("/subjects")
     public List<DeadlinePredictionDTO> getSubjects() {
-        return subjects;
+        // Для простоты — вернём все дедлайны всех студентов
+        return service.getAllPredictions();
     }
-    
-    
+
     @PostMapping("/subjects")
-    public ResponseEntity<DeadlinePredictionDTO> addSubject(@RequestBody @Valid DeadlinePredictionDTO subject) {
-        //subject.setId((long)subjects.size() + 1);
-        subjects.add(subject);
-        return ResponseEntity.status(HttpStatus.CREATED).body(subject);
-    }   
+    public void addSubject(@RequestBody DeadlinePredictionDTO subject) {
+        if (subject.getSubject() == null || subject.getDeadline() == null || subject.getStudentId() == null) {
+            throw new IllegalArgumentException("Недостаточно данных");
+        }
+        service.addDeadline(subject);
+    }
+    @GetMapping("subjects/{studentId}")
+    public List<DeadlinePredictionDTO> getByStudent(@PathVariable Long studentId) {
+        return service.getPredictionsForStudent(studentId);
+    }
 }

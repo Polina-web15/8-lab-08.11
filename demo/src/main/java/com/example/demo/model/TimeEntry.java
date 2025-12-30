@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -22,7 +23,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-
 @Entity
 @Table(name = "time_entry")
 public class TimeEntry {//время прохода
@@ -39,5 +39,15 @@ public class TimeEntry {//время прохода
     private LocalDateTime start;
     @Column(name = "end_time")
     private LocalDateTime end;
+    public LocalDateTime getStartTime() {return start;}
+
+    public LocalDateTime getEndTime() {return end;}
+
     private boolean isBillable;// учётное время
+    public double getHours() {
+    if (start == null || end == null) {
+        return 0.0;
+    }
+    return Duration.between(start, end).toMinutes() / 60.0;
+}
 }

@@ -1,0 +1,8 @@
+<!-- A1 -->
+${students.name}
+
+<!-- B1 -->
+${students.groupName}
+
+<!-- C1 -->
+${students.username}

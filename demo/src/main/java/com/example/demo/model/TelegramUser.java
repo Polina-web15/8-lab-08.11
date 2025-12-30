@@ -32,7 +32,4 @@ public class TelegramUser {
 
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
 }
